@@ -11,9 +11,9 @@ packages:
  - deps/concurrent-skiplist/
  - deps/ctrie
 
- - location:
-    git:  https://github.com/iu-parfunc/tslogger.git
-    commit: bfa8d2b52f0d41439863b15863baa0ca2ef613d9
+ # - location:
+ #    git:  https://github.com/iu-parfunc/tslogger.git
+ #    commit: bfa8d2b52f0d41439863b15863baa0ca2ef613d9
     
 # TODO: Revive:
  # - haskell/lvish-apps/
@@ -30,7 +30,7 @@ packages:
  
 extra-deps:
 # Soon:  
-# - tslogger-0.1.0.1
+ - tslogger-0.1.0.1
  - atomic-primops-0.8.0.4
  - chaselev-deque-0.5.0.5
  - bits-atomic-0.1.3
