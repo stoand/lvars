@@ -34,7 +34,7 @@ library
     mtl,
     par-classes,
     par-transformers,
-    vector                  >= 0.10 && < 0.12,
+    vector                  >= 0.10 && <= 0.13,
     vector-algorithms,
     primitive               >= 0.6
 
