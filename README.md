@@ -1,5 +1,7 @@
 # LVish library and dependencies
 
+Build: `stack build --flag lvish:-nonidem --file-watch`
+
 [![Hackage page (downloads and API reference)][hackage-lvish]][hackage]
 
 
