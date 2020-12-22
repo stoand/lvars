@@ -76,7 +76,7 @@ verifyFiniteJoin allStates join =
 
 -- | Verify that a blocking get is monotone in just the right way.
 --   This takes a designated bottom and top element.
-verifyFiniteGet :: (Eq a, Show a, JoinSemiLattice a,
+verifyFiniteGet :: (Eq a, Show a, BoundedJoinSemiLattice a,
                     Eq b, Show b) =>
                    [a] -> (b,b) -> (a -> b) -> Maybe String
 verifyFiniteGet allStates (bot,top) getter =
@@ -102,14 +102,14 @@ verifyFiniteGet allStates (bot,top) getter =
 
 
 -- | A new pure LVar populated with the provided initial state.
-newPureLVar :: JoinSemiLattice t =>
+newPureLVar :: BoundedJoinSemiLattice t =>
                t -> Par e s (PureLVar s t)
 newPureLVar st = WrapPar$ fmap (PureLVar . WrapLVar) $
                  LI.newLV $ newIORef st
 
 -- | Blocks until the contents of `lv` are at or above one element of
 -- `thrshSet`, then returns that one element.
-getPureLVar :: (JoinSemiLattice t, Eq t, HasGet e) => PureLVar s t -> [t] -> Par e s t
+getPureLVar :: (BoundedJoinSemiLattice t, Eq t, HasGet e) => PureLVar s t -> [t] -> Par e s t
 getPureLVar (PureLVar (WrapLVar lv)) thrshSet =
   WrapPar$ LI.getLV lv globalThresh deltaThresh
   where globalThresh ref _ = do
@@ -121,7 +121,7 @@ getPureLVar (PureLVar (WrapLVar lv)) thrshSet =
 
 -- | Returns the element of thrshSet that `currentState` is above, if
 -- it exists.  (Assumes that there is only one such element!)
-checkThresholds :: (JoinSemiLattice t, Eq t) => t -> [t] -> Maybe t
+checkThresholds :: (BoundedJoinSemiLattice t, Eq t) => t -> [t] -> Maybe t
 -- ARGH: This is inefficient IF the state is IN the threshold set.  In that case a
 -- log(N) Set.member test should be enough, not a full O(N) traversal of all states
 -- in the threshold set.
@@ -169,7 +169,7 @@ checkThresholds currentState thrshSet = case thrshSet of
 --   S.foldl' (\ flg elm -> flg || fn elm) False st
 
 -- | Like `getPureLVar` but uses a threshold function rather than an explicit set.
-unsafeGetPureLVar :: (JoinSemiLattice t, Eq t, HasGet e) => PureLVar s t -> (t -> Bool) -> Par e s t
+unsafeGetPureLVar :: (BoundedJoinSemiLattice t, Eq t, HasGet e) => PureLVar s t -> (t -> Bool) -> Par e s t
 unsafeGetPureLVar (PureLVar (WrapLVar lv)) thrsh =
   WrapPar$ LI.getLV lv globalThresh deltaThresh
   where globalThresh ref _ = do
@@ -183,7 +183,7 @@ unsafeGetPureLVar (PureLVar (WrapLVar lv)) thrsh =
 
 -- | Wait until the pure LVar has crossed a threshold and then unblock.  (In the
 -- semantics, this is a singleton query set.)
-waitPureLVar :: (JoinSemiLattice t, Eq t, HasGet e) =>
+waitPureLVar :: (BoundedJoinSemiLattice t, Eq t, HasGet e) =>
                 PureLVar s t -> t -> Par e s ()
 waitPureLVar (PureLVar (WrapLVar iv)) thrsh =
    WrapPar$ LI.getLV iv globalThresh deltaThresh
@@ -197,7 +197,7 @@ waitPureLVar (PureLVar (WrapLVar iv)) thrsh =
                                                return Nothing 
 
 -- | Put a new value which will be joined with the old.
-putPureLVar :: (JoinSemiLattice t, HasPut e) =>
+putPureLVar :: (BoundedJoinSemiLattice t, HasPut e) =>
                PureLVar s t -> t -> Par e s ()
 putPureLVar (PureLVar (WrapLVar iv)) !new =
     WrapPar $ LI.putLV iv putter
