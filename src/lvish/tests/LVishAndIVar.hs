@@ -381,17 +381,17 @@ dftest0 = runParNonDet $ isND $ do
   case m of
     Just i -> IV.get i
 
-case_dftest1 = assertEqual "deefreeze double ivar" (Just "hello") =<< dftest1
+-- case_dftest1 = assertEqual "deefreeze double ivar" (Just "hello") =<< dftest1
 
--- | Should return (Just (Just "hello"))
-dftest1 :: IO (Maybe String)
-dftest1 = runParNonDet $ isND $ do
-  iv1 <- IV.new
-  iv2 <- IV.new
-  IV.put_ iv1 iv2
-  IV.put_ iv2 "hello"
-  Just x <- IV.freezeIVar iv1
-  IV.freezeIVar x
+-- -- | Should return (Just (Just "hello"))
+-- dftest1 :: IO (Maybe String)
+-- dftest1 = runParNonDet $ isND $ do
+--   iv1 <- IV.new
+--   iv2 <- IV.new
+--   IV.put_ iv1 iv2
+--   IV.put_ iv2 "hello"
+--   Just x <- IV.freezeIVar iv1
+--   IV.freezeIVar x
 
 case_dftest3 = assertEqual "freeze simple ivar" (Just 3) =<< dftest3
 dftest3 :: IO (Maybe Int)

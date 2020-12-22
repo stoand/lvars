@@ -26,7 +26,7 @@ import qualified Data.Vector.Mutable as MV
 tests :: TestTree
 tests = testGroup "ST tests"
   [ basicST
-  , treeSplit
+  -- , treeSplit
   , testCase "runParST test with recipe" $
     assertEqual "" 33 $
     LV.runPar $ runParST STUnitRecipe p4
@@ -125,28 +125,28 @@ instance STSplittable (Tree a) where
        return $ Node x l' r'
 
 
-p3 :: forall s ss e.
-      (HasPut e, HasGet e) =>
-      ParST (Tree Int ss) Par e s (Int, Int)
-p3 = do
-  x <- liftST $ newSTRef 10
-  y <- liftST $ newSTRef 20
-  z <- liftST $ newSTRef 30
-  unsafeInstall (Node x (Node y Empty Empty) (Node z Empty Empty))
-  void $ V.forkSTSplit ()
-    (do Node r _ _ <- R.ask
-        liftST $ writeSTRef r 99)
-    (do Node r _ _ <- R.ask
-        liftST $ writeSTRef r 101)
+-- p3 :: forall s ss e.
+--       (HasPut e, HasGet e) =>
+--       ParST (Tree Int ss) Par e s (Int, Int)
+-- p3 = do
+--   x <- liftST $ newSTRef 10
+--   y <- liftST $ newSTRef 20
+--   z <- liftST $ newSTRef 30
+--   unsafeInstall (Node x (Node y Empty Empty) (Node z Empty Empty))
+--   void $ V.forkSTSplit ()
+--     (do Node r _ _ <- R.ask
+--         liftST $ writeSTRef r 99)
+--     (do Node r _ _ <- R.ask
+--         liftST $ writeSTRef r 101)
 
-  (Node _ (Node y' _ _) (Node z' _ _)) <- R.ask
-  a1 <- liftST $ readSTRef y'
-  a2 <- liftST $ readSTRef z'
-  return (a1,a2)
+--   (Node _ (Node y' _ _) (Node z' _ _)) <- R.ask
+--   a1 <- liftST $ readSTRef y'
+--   a2 <- liftST $ readSTRef z'
+--   return (a1,a2)
 
-treeSplit :: TestTree
-treeSplit = testCase "Splitting binary tree" $
-  assertEqual "" (99,101) (runPar $ runParST (TreeRecipe Empty) p3)
+-- treeSplit :: TestTree
+-- treeSplit = testCase "Splitting binary tree" $
+--   assertEqual "" (99,101) (runPar $ runParST (TreeRecipe Empty) p3)
 
 
 p4 :: ParST (STUnit s0) Par e s Int
