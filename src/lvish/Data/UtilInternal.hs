@@ -10,9 +10,9 @@ module Data.UtilInternal
 
 import           Control.Applicative (Const(..), Applicative, pure, (*>))
 import           Control.Monad (void)
-import           Data.Monoid (Monoid(..))
+import           Data.Monoid
 import qualified Data.Map as M
-import           Prelude ((.))
+import           Prelude ((.), Semigroup)
 
 --------------------------------------------------------------------------------
 -- Helper code.
@@ -25,7 +25,8 @@ import           Prelude ((.))
 newtype Traverse_ f = Traverse_ { runTraverse_ :: f () }
 instance Applicative f => Monoid (Traverse_ f) where
   mempty = Traverse_ (pure ())
-  Traverse_ a `mappend` Traverse_ b = Traverse_ (a *> b)
+instance Applicative f => Semigroup (Traverse_ f) where
+  Traverse_ a <> Traverse_ b = Traverse_ (a *> b)
 -- Since the Applicative used is Const (newtype Const m a = Const m), the
 -- structure is never built up.
 --(b) You can derive traverseWithKey_ from myfoldMapWithKey, e.g. as follows:
